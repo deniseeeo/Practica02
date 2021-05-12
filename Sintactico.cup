@@ -1,0 +1,51 @@
+
+import java_cup.runtime.*;
+
+parser code 
+{:
+    /**
+     * Método al que se llama automáticamente ante algún error sintactico.
+     **/ 
+    public void syntax_error(Symbol s){ 
+        System.out.println("Error Sintáctico en la Línea " + (s.left) +
+        " Columna "+s.right+ ". No se esperaba este componente: " +s.value+"."); 
+    } 
+
+    /**
+     * Método al que se llama automáticamente ante algún error sintáctico 
+     * en el que ya no es posible una recuperación de errores.
+     **/ 
+    public void unrecovered_syntax_error(Symbol s) throws java.lang.Exception{ 
+        System.out.println("Error síntactico irrecuperable en la Línea " + 
+        (s.left)+ " Columna "+s.right+". Componente " + s.value + 
+        " no reconocido."); 
+    }  
+:} 
+
+terminal String PARIZQ;
+terminal String PARDER;
+terminal String CORDER;
+terminal String CORIZQ;
+terminal String PC;
+terminal String DP;
+terminal String COMA;
+terminal String SL;
+terminal String NUM;
+terminal String IDE;
+
+non terminal INCR;
+non terminal SET;
+non terminal PUTS;
+non terminal EXPR;
+non terminal CADENA;
+
+
+SET ::= 
+    ID CADENA:a   {:System.out.println ("PRUEBA "+a);:}
+|   ID NUM:b      {:System.out.println ("PRUEBA 2"+b);:}
+;
+
+
+PUTS ::= 
+    IDE ID   {:System.out.println ("PRUEBA PUTS");:}
+;
