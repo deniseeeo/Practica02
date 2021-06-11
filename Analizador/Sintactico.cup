@@ -1,0 +1,119 @@
+package Analizador;
+import java_cup.runtime.*;
+
+parser code 
+{:
+        public static void main(  args[]) throws Exception{
+		new parser(new Yylex(System.in)).parse();
+	}
+    /**
+     * Método al que se llama automáticamente ante algún error sintactico.
+     **/ 
+    public void syntax_error(Symbol s){ 
+        System.out.println("Error Sintáctico en la Línea " + (s.left) +
+        " Columna "+s.right+ ". No se esperaba este componente: " +s.value+"."); 
+    } 
+
+    /**
+     * Método al que se llama automáticamente ante algún error sintáctico 
+     * en el que ya no es posible una recuperación de errores.
+     **/ 
+    public void unrecovered_syntax_error(Symbol s) throws java.lang.Exception{ 
+        System.out.println("Error síntactico irrecuperable en la Línea " + 
+        (s.left)+ " Columna "+s.right+". Componente " + s.value + 
+        " no reconocido."); 
+    }  
+:} 
+
+terminal PARIZQ;
+terminal PARDER;
+terminal CORCDER;
+terminal CORCIZQ;
+terminal PC;
+terminal DP;
+terminal NUM;
+terminal DECIMAL;
+terminal ID;
+terminal IDE;
+terminal COMENTARIO;    
+terminal LLAVEA;
+terminal LLAVEC;
+terminal MAS;
+terminal MENOS;
+terminal MULTIPLICACION;
+terminal DIVISION;
+terminal MENOR;
+terminal MAYOR;
+terminal MENORIGUAL;
+terminal MAYORIGUAL;
+terminal IGUAL;
+terminal PORCENTAJE;
+terminal DIFERENCIA;
+terminal AND,OR,NOT,EQ,NE,IN,NI;
+terminal SET,PUTS,EXPR,AGRUPACION,IF,THEN,ELSE,ELSEIF,SWITCH,DEFAULT,WHILE,CONTINUE,BREAK,FOR,INCR,PROC,RETURN;   
+
+non terminal INCR01, SWITCH01;
+non terminal IF01, WHILE01;
+non terminal SET01 , FOR01;
+non terminal PUTS01, PROC01;
+non terminal ASIGNAR, AGRUPACIONES, CASE, CASE01;
+non terminal VALOR, TEST, ARGUMENTOS;
+non terminal OPERACIONES, OPERAR, SIMBRELACIONAL;
+non terminal ini, expr, expr_list, expr_part;
+
+start with ini;
+ini ::= expr_list;
+expr_list ::= expr expr_list | expr ;
+expr_part ::= expr:e {: System.out.println(" = "+e+";"); :} ;
+
+expr  ::= COMENTARIO | IDE | SET01 | PUTS01 | AGRUPACIONES | IF01 | SWITCH01 | WHILE01 | FOR01 | PROC01 {: System.out.println("SENTENCIA CORRECTA"); :}
+;
+
+VALOR ::= IDE ID | NUM | ID {: System.out.println("SENTENCIA CORRECTA"); :}
+;
+
+SET01 ::= SET ID VALOR  {: System.out.println("SENTENCIA CORRECTA"); :}
+;
+
+AGRUPACIONES ::= SET ID AGRUPACION  | PUTS AGRUPACION | PUTS  LLAVEA expr_list LLAVEC | SET ID CORCIZQ EXPR OPERACIONES CORCDER {: System.out.println("SENTENCIA CORRECTA"); :}
+;
+
+PUTS01 ::= PUTS IDE ID  {: System.out.println("SENTENCIA CORRECTA"); :}
+;
+
+OPERACIONES ::=  OPERAR MAS  OPERAR |  OPERAR MENOS  OPERAR | OPERAR MULTIPLICACION  OPERAR | OPERAR DIVISION OPERAR  | OPERAR PORCENTAJE  OPERAR {: System.out.println("SENTENCIA CORRECTA"); :}	
+;
+
+OPERAR ::= IDE ID | NUM
+;
+
+SIMBRELACIONAL ::=  IGUAL | MAYOR | MENOR | MAYORIGUAL | MENORIGUAL | EQ | NE | IN | NI
+;
+
+TEST ::=  OPERAR SIMBRELACIONAL  OPERAR {: System.out.println("SENTENCIA CORRECTA"); :}
+;
+
+IF01 ::= IF LLAVEA TEST LLAVEC LLAVEA expr_list LLAVEC | IF LLAVEA TEST LLAVEC LLAVEA expr_list LLAVEC ELSE LLAVEA expr_list LLAVEC {: System.out.println("SENTENCIA CORRECTA"); :}
+;
+
+SWITCH01 ::= SWITCH ID  LLAVEA CASE01 DEFAULT  LLAVEA expr_list  LLAVEC  LLAVEC {: System.out.println("SENTENCIA CORRECTA"); :}
+;
+
+CASE ::=	AGRUPACION LLAVEA expr_list LLAVEC {: System.out.println("SENTENCIA CORRECTA"); :}
+;
+
+CASE01 ::= CASE | CASE CASE01 {: System.out.println("SENTENCIA CORRECTA"); :}
+;
+
+WHILE01 ::= WHILE  LLAVEA TEST  LLAVEC  LLAVEA expr_list  LLAVEC {: System.out.println("SENTENCIA CORRECTA"); :}
+;
+
+FOR01 ::= FOR  LLAVEA SET01  LLAVEC  LLAVEA TEST  LLAVEC  LLAVEA INCR ID  LLAVEC  LLAVEA expr_list  LLAVEC {: System.out.println("SENTENCIA CORRECTA"); :}
+;
+
+PROC01 ::= PROC ID  LLAVEA ARGUMENTOS  LLAVEC  LLAVEA expr_list RETURN VALOR  LLAVEC {: System.out.println("SENTENCIA CORRECTA"); :}
+;
+
+ARGUMENTOS ::= ID | ID ARGUMENTOS {: System.out.println("SENTENCIA CORRECTA"); :}
+;
+
